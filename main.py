@@ -6,8 +6,9 @@ import certifi
 import re
 
 url = 'ここに検索結果のURLを入力'
-res = requests.get(url)
+file = "sample.txt"
 
+res = requests.get(url)
 soup = BeautifulSoup(res.text, "html.parser")
 
 # serector利用
@@ -22,12 +23,18 @@ bid = soup.find_all(class_=re.compile("Product__bid"))
 # タグも一緒に表示
 # print(elems)
 # 値のみ表示
-print(elems[0].contents[0])
+# print(elems[0].contents[0])
 # リンク先表示
 # print(elems[0].attrs['href'])
 
+fileobj = open(file, "w", encoding = "utf_8")
+
 num = 0
 while num < len(elems):
-    print(productName[num].contents[0])
-    print(elems[num].contents[0])
+    # print(productName[num].contents[0])
+    fileobj.write(productName[num].contents[0] + "\n")
+    # print(elems[num].contents[0])
+    fileobj.write(elems[num].contents[0] + "\n")
     num = num + 1
+
+fileobj.close()
