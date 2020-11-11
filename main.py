@@ -1,40 +1,46 @@
 # coding:utf-8
-import urllib3
 import requests
 from bs4 import BeautifulSoup
-import certifi
 import re
 
-url = 'ここに検索結果のURLを入力'
-file = "sample.txt"
-
-res = requests.get(url)
-soup = BeautifulSoup(res.text, "html.parser")
-
-# serector利用
-# elems = soup.select('#allContents > div.l-wrapper.cf > div.l-contents > div.l-contentsBody > div > div.Result__body > div > div > ul > li:nth-of-type(1) > div.Product__detail > h3 > a')
-
-# 正規表現
-productName = soup.find_all(class_=re.compile("Product__titleLink"))
-elems = soup.find_all(class_=re.compile("Product__priceValue u-textRed"))
-bid = soup.find_all(class_=re.compile("Product__bid"))
+# 検索したい文字列
+product = "任天堂スイッチ"
+# 出力ファイル名
+file = "sample2.txt"
+# 何ページ分スクレイピングするか
+page_count = 5
+# 何件以上の入札分を出力するか
+bid_count = 0
 
 
-# タグも一緒に表示
-# print(elems)
-# 値のみ表示
-# print(elems[0].contents[0])
-# リンク先表示
-# print(elems[0].attrs['href'])
 
-fileobj = open(file, "w", encoding = "utf_8")
+page = 1
+i = 0
+while i < page_count:
+    url = 'https://auctions.yahoo.co.jp/search/search?p=' + product +'&va=' + product + '&exflg=1&b=' + str(page) +'&n=100'
 
-num = 0
-while num < len(elems):
-    # print(productName[num].contents[0])
-    fileobj.write(productName[num].contents[0] + "\n")
-    # print(elems[num].contents[0])
-    fileobj.write(elems[num].contents[0] + "\n")
-    num = num + 1
+    res = requests.get(url)
+    soup = BeautifulSoup(res.text, "html.parser")
 
-fileobj.close()
+    # 正規表現
+    productName = soup.find_all(class_=re.compile("Product__titleLink"))
+    elems = soup.find_all(class_=re.compile("Product__priceValue u-textRed"))
+    bid = soup.find_all(class_=re.compile("Product__bid"))
+
+
+    fileobj = open(file, "a", encoding = "utf_8")
+
+    num = 0
+    while num < len(elems):
+        if int(bid[num].contents[0]) >= bid_count:
+            # print(productName[num].contents[0])
+            fileobj.write(productName[num].contents[0] + "\n")
+            # print(elems[num].contents[0])
+            fileobj.write(elems[num].contents[0] + "\n")
+        num = num + 1
+
+    fileobj.close()
+    print(str(i + 1) + "ページ目終了")
+
+    i += 1
+    page += 100
