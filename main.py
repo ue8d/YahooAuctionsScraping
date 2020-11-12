@@ -4,13 +4,13 @@ from bs4 import BeautifulSoup
 import re
 
 # 検索したい文字列
-product = "任天堂スイッチ"
-# 出力ファイル名
-file = "sample2.txt"
+product = input("検索したい商品名を入力してください：")
 # 何ページ分スクレイピングするか
-page_count = 5
+page_count = int(input("何ページ分実行しますか？(半角数)："))
 # 何件以上の入札分を出力するか
-bid_count = 0
+bid_count = int(input("何件以上の入札分を出力しますか？(半角数)："))
+# 出力ファイル名
+file = "sample.txt"
 
 
 
